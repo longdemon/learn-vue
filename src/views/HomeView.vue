@@ -3,6 +3,7 @@ import { useAuthState } from "../store";
 import router from "../router";
 import axios from "axios";
 import { onMounted, ref } from "vue";
+import { Icon } from "@iconify/vue";
 
 const { getUsername, handleLogout } = useAuthState();
 const submitLogout = () => {
@@ -23,7 +24,7 @@ onMounted(() => {
   <main>
     <div class="header">
       <div>
-        <input type="text">
+        <input type="text" />
         <button>search</button>
       </div>
       <div>
@@ -35,7 +36,12 @@ onMounted(() => {
     <ul class="responsive-table">
       <li class="table-header">
         <div class="col col-1">Id</div>
-        <div class="col col-2">User Name</div>
+        <div class="col col-2">
+          User Name
+          <button>
+            <Icon icon="material-symbols:arrow-drop-down-circle" width="30" height="30"></Icon>
+          </button>
+        </div>
         <div class="col col-3">Email</div>
         <div class="col col-4">Phone</div>
       </li>
@@ -67,7 +73,10 @@ body {
   padding-left: 10px;
   padding-right: 10px;
 }
-
+.col button {
+  background: none;
+  border: none;
+}
 h2 {
   font-size: 26px;
   margin: 20px 0;
