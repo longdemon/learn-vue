@@ -11,21 +11,60 @@ const submitLogout = () => {
   router.push("login");
 };
 
+const sort = ref("");
 const listUser = ref(null);
+const searchKey = ref("");
 
-onMounted(() => {
-  axios
+function compare(a, b) {
+  if (a.name < b.name) {
+    return -1;
+  }
+  if (a.name > b.name) {
+    return 1;
+  }
+  return 0;
+}
+
+const handleSort = sortType => {
+  sort.value = sortType;
+  if (sortType === "ASC") {
+    listUser.value.sort(compare);
+  } else if (sortType === "DESC") {
+    listUser.value.sort(compare).reverse();
+  }
+};
+
+const handleSearch = async () => {
+  await fetchNewData();
+  if (searchKey.value) {
+    const tmpArr = listUser.value.filter(user =>
+      user.name.toLowerCase().includes(searchKey.value.toLowerCase())
+    );
+    listUser.value = tmpArr;
+  }
+};
+
+const fetchNewData = async () => {
+  await axios
     .get("https://jsonplaceholder.typicode.com/users")
     .then(data => (listUser.value = data.data));
-});
+};
+
+const reset = () => {
+  sort.value = "";
+  searchKey.value = "";
+  fetchNewData();
+};
+
+onMounted(() => fetchNewData());
 </script>
 
 <template>
   <main>
     <div class="header">
       <div>
-        <input type="text" />
-        <button>search</button>
+        <input type="text" v-model="searchKey" @keyup.enter.native="handleSearch()" />
+        <button @click="reset">Reset</button>
       </div>
       <div>
         Wellcome {{getUsername()}}
@@ -38,8 +77,11 @@ onMounted(() => {
         <div class="col col-1">Id</div>
         <div class="col col-2">
           User Name
-          <button>
-            <Icon icon="material-symbols:arrow-drop-down-circle" width="30" height="30"></Icon>
+          <button @click="handleSort('ASC')" v-if="sort === 'DESC' || sort === ''">
+            <Icon icon="material-symbols:arrow-circle-down-rounded" width="30" height="30"></Icon>
+          </button>
+          <button @click="handleSort('DESC')" v-if="sort === 'ASC'">
+            <Icon icon="material-symbols:arrow-circle-up-rounded" width="30" height="30"></Icon>
           </button>
         </div>
         <div class="col col-3">Email</div>
